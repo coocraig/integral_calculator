@@ -1,9 +1,10 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import math
+from scipy.integrate import quad
 
 
-def calculator_1(lower_bound, upper_bound, func, accuracy = 100000, graph = True, progress = True):
+def rec_rule_int_calc(lower_bound, upper_bound, func, accuracy = 100000, graph = True, progress = True):
     
     # Creating array of segments between lower and upper bound points
     sequence = np.linspace(lower_bound, upper_bound, accuracy)
@@ -17,7 +18,7 @@ def calculator_1(lower_bound, upper_bound, func, accuracy = 100000, graph = True
     for index, item in enumerate(sequence):
         total = total + func(item) * seq_width
 
-        if(progress and index % 10000 == 0):
+        if(progress and index % 1000000 == 0):
             perc = 100 * round((index / len(sequence)), 4)
             print(f"{perc}%")
     print(total)
@@ -51,11 +52,24 @@ def calculator_1(lower_bound, upper_bound, func, accuracy = 100000, graph = True
         plt.xlabel('x')
         plt.ylabel('f(x)')
         plt.show()
+    
+    result, error = quad(func, lower_bound, upper_bound)
+
+    return (total, result)
 
 
 
 
 def func1(x):
-    return x**3
+    # return (2*x)
+    # return (1/math.sqrt(2*math.pi))*math.e**(-(x**2/2))
+    # return np.sin(1000*x)
+    return np.exp(-x**2)
 
-print(calculator_1(0,5, func1, accuracy=10000000))
+
+answers = rec_rule_int_calc(-5, 25, func1, accuracy=9999999, graph=False)
+
+print(f"Estimated integral value: {round(answers[0],8)}")
+print(f"Calculated using scipy  : {round(answers[1],8)}")
+
+# min(func(sequence))
